@@ -1,0 +1,4 @@
+### Simple chat completion
+GET http://localhost:9090/api/chat?prompt=tell me a joke about java programmer
+
+<> 2024-11-21T142911.200.json
