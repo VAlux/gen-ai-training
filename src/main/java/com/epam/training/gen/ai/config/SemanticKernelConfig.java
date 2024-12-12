@@ -4,6 +4,7 @@ import com.azure.ai.openai.OpenAIAsyncClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
 import com.epam.training.gen.ai.properties.OpenAIConfigurationProperties;
+import com.epam.training.gen.ai.properties.PromptExecutionConfigurationProperties;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
@@ -19,10 +20,13 @@ import org.springframework.context.annotation.Configuration;
 public class SemanticKernelConfig {
 
   private final OpenAIConfigurationProperties openAIProperties;
+  private final PromptExecutionConfigurationProperties promptExecutionProperties;
 
   @Autowired
-  public SemanticKernelConfig(OpenAIConfigurationProperties openAIProperties) {
+  public SemanticKernelConfig(OpenAIConfigurationProperties openAIProperties,
+                              PromptExecutionConfigurationProperties promptExecutionProperties) {
     this.openAIProperties = openAIProperties;
+    this.promptExecutionProperties = promptExecutionProperties;
   }
 
   @Bean
@@ -51,8 +55,8 @@ public class SemanticKernelConfig {
   @Bean
   public PromptExecutionSettings promptExecutionSettings() {
     return PromptExecutionSettings.builder()
-      .withMaxTokens(1024)
-      .withTemperature(0.5)
+      .withMaxTokens(this.promptExecutionProperties.getMaxTokens())
+      .withTemperature(this.promptExecutionProperties.getTemperature())
       .build();
   }
 
