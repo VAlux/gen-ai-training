@@ -1,5 +1,6 @@
 package com.epam.training.gen.ai.properties;
 
+import com.epam.training.gen.ai.shared.ModelDeployment;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +10,7 @@ public class OpenAIConfigurationProperties {
 
   private String key;
   private String endpoint;
-  private String deploymentName;
+  private ModelDeployment modelDeployment;
 
   public String getKey() {
     return this.key;
@@ -27,11 +28,11 @@ public class OpenAIConfigurationProperties {
     this.endpoint = endpoint;
   }
 
-  public String getDeploymentName() {
-    return this.deploymentName;
+  public ModelDeployment getModelDeployment() {
+    return this.modelDeployment;
   }
 
-  public void setDeploymentName(String deploymentName) {
-    this.deploymentName = deploymentName;
+  public void setModelDeployment(ModelDeployment modelDeployment) {
+    this.modelDeployment = modelDeployment;
   }
 }

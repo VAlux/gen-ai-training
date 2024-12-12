@@ -1,6 +1,10 @@
 ### Simple chat completion
 GET http://localhost:9090/api/chat?prompt=tell me a joke about java programmer
 
+// GPT-4o :: "output": "Why do Java programmers wear glasses?\n\nBecause they don't C#!"
+// Claude :: "output": "Sure, here's a joke about Java programmers:\n\nWhy did the Java programmer quit their job?\nThey didn't get arrays!"
+// Gemini PRO :: "output": "A Java programmer is asked, \"If a plane is flying in the sky with 5 people and 1 guy jumps off, what is my name?\"\nThe Java programmer replies, \"What is your name?\"\n\"John,\" said the person asking.\nThe Java programmer then says, \"Then your name is John.\"\n"
+
 <> 2024-11-21T142911.200.json
 
 ### Chat history test before
