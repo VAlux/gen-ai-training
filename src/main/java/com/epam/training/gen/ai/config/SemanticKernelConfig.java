@@ -8,6 +8,7 @@ import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
 import com.microsoft.semantickernel.orchestration.InvocationReturnMode;
+import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
 import com.microsoft.semantickernel.orchestration.ToolCallBehavior;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,19 @@ public class SemanticKernelConfig {
   }
 
   @Bean
-  public InvocationContext invocationContext() {
+  public PromptExecutionSettings promptExecutionSettings() {
+    return PromptExecutionSettings.builder()
+      .withMaxTokens(1024)
+      .withTemperature(0.5)
+      .build();
+  }
+
+  @Bean
+  public InvocationContext invocationContext(PromptExecutionSettings executionSettings) {
     return new InvocationContext.Builder()
       .withReturnMode(InvocationReturnMode.LAST_MESSAGE_ONLY)
       .withToolCallBehavior(ToolCallBehavior.allowAllKernelFunctions(true))
+      .withPromptExecutionSettings(executionSettings)
       .build();
   }
 }
