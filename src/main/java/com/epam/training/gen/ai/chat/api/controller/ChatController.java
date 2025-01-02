@@ -29,7 +29,7 @@ public class ChatController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getChatResponse(@RequestParam(value = "prompt") String prompt) {
-    var response = this.completionService.complete(prompt);
+    final var response = this.completionService.complete(prompt);
 
     LOGGER.info("-> Received completion request for prompt: {}", prompt);
     LOGGER.info("<- Generated response: {}", response);
