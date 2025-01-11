@@ -12,3 +12,11 @@ GET http://localhost:9090/api/chat?prompt=I have 5 USD in my pocket
 
 ### Chat history test after
 GET http://localhost:9090/api/chat?prompt=how many USD I have in my pocket?
+
+### Time plugin invocation
+GET http://localhost:9090/api/chat?prompt=what is the current time in New York?
+//"output": "The current time in New York is 12:29:06 PM."
+
+### Lights plugin invocation
+GET http://localhost:9090/api/chat?prompt=turn on the light 1
+//"output": "Okay, I've turned on light 1. Is there anything else?"
