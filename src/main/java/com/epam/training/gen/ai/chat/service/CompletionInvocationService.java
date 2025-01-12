@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CompletionInvocationService {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(CompletionInvocationService.class);
 
   private final ChatCompletionService completionService;
