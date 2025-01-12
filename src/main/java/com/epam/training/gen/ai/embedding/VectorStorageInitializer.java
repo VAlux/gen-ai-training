@@ -17,20 +17,22 @@ public class VectorStorageInitializer {
   private static final Logger LOGGER = LoggerFactory.getLogger(VectorStorageInitializer.class);
 
   private final VectorStorageService vectorStorageService;
+  private final TokenTextSplitter textSplitter;
 
   @Value("classpath:/documents/cats.pdf")
-  Resource alice;
+  Resource resource;
 
   @Autowired
   public VectorStorageInitializer(VectorStorageService vectorStorageService) {
     this.vectorStorageService = vectorStorageService;
+    this.textSplitter = new TokenTextSplitter(300, 300, 5, 1000, true);
   }
 
   @EventListener(ApplicationReadyEvent.class)
   public void init() {
-    TikaDocumentReader aliceReader = new TikaDocumentReader(this.alice);
-    var aliceContent = aliceReader.get();
-    var splitDocuments = new TokenTextSplitter(300, 300, 5, 1000, true).split(aliceContent);
+    var reader = new TikaDocumentReader(this.resource);
+    var content = reader.get();
+    var splitDocuments = this.textSplitter.split(content);
 
     LOGGER.info("Embedding {} document chunks, please wait before performing the search...", splitDocuments.size());
     this.vectorStorageService.persistDocuments(splitDocuments);
