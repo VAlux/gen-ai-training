@@ -25,6 +25,8 @@ public class VectorStorageInitializer {
   @Autowired
   public VectorStorageInitializer(VectorStorageService vectorStorageService) {
     this.vectorStorageService = vectorStorageService;
+
+    // NO, we do not need to extract these magic numbers to the configuration, or somewhere else. This is just a PoC.
     this.textSplitter = new TokenTextSplitter(300, 300, 5, 1000, true);
   }
 
