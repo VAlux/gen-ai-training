@@ -40,7 +40,7 @@ public class SemanticKernelConfig {
   @Bean
   public ChatCompletionService completionService(OpenAIAsyncClient client) {
     return OpenAIChatCompletion.builder()
-      .withModelId(this.openAIProperties.getDeploymentName())
+      .withModelId(this.openAIProperties.getModelDeployment().getDeploymentId())
       .withOpenAIAsyncClient(client)
       .build();
   }
