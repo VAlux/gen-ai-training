@@ -2,3 +2,9 @@
 GET http://localhost:9090/api/chat?prompt=tell me a joke about java programmer
 
 <> 2024-11-21T142911.200.json
+
+### Chat history test before
+GET http://localhost:9090/api/chat?prompt=I have 5 USD in my pocket
+
+### Chat history test after
+GET http://localhost:9090/api/chat?prompt=how many USD I have in my pocket?
