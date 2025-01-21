@@ -32,8 +32,6 @@ Content-Type: text/plain
 < ./monads.txt
 --WebAppBoundary--
 
-### Similarity search
-GET http://localhost:9090/api/chat/search?
-  query=how to build a maybe monad
-  &topK=3
+### Query relative to monads.txt
+GET http://localhost:9090/api/chat?prompt=how to build a maybe monad
 

@@ -1,4 +1,4 @@
-package com.epam.training.gen.ai.properties;
+package com.epam.training.gen.ai.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
