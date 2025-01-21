@@ -11,22 +11,32 @@ import com.microsoft.semantickernel.orchestration.InvocationContext;
 import com.microsoft.semantickernel.orchestration.InvocationReturnMode;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
 import com.microsoft.semantickernel.orchestration.ToolCallBehavior;
+import com.microsoft.semantickernel.plugin.KernelPlugin;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class SemanticKernelConfig {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(SemanticKernelConfig.class);
+
   private final OpenAIConfigurationProperties openAIProperties;
   private final PromptExecutionConfigurationProperties promptExecutionProperties;
+  private final List<KernelPlugin> plugins;
 
   @Autowired
   public SemanticKernelConfig(OpenAIConfigurationProperties openAIProperties,
-                              PromptExecutionConfigurationProperties promptExecutionProperties) {
+                              PromptExecutionConfigurationProperties promptExecutionProperties,
+                              List<KernelPlugin> plugins) {
     this.openAIProperties = openAIProperties;
     this.promptExecutionProperties = promptExecutionProperties;
+    this.plugins = plugins;
   }
 
   @Bean
@@ -47,9 +57,11 @@ public class SemanticKernelConfig {
 
   @Bean
   public Kernel kernel(ChatCompletionService completionService) {
-    return Kernel.builder()
-      .withAIService(ChatCompletionService.class, completionService)
-      .build();
+    Kernel.Builder builder = Kernel.builder().withAIService(ChatCompletionService.class, completionService);
+    this.plugins.forEach(builder::withPlugin);
+    LOGGER.info("Added {} plugin(s) to the kernel", this.plugins.size());
+
+    return builder.build();
   }
 
   @Bean
