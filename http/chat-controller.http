@@ -20,3 +20,8 @@ GET http://localhost:9090/api/chat?prompt=what is the current time in New York?
 ### Lights plugin invocation
 GET http://localhost:9090/api/chat?prompt=turn on the light 1
 //"output": "Okay, I've turned on light 1. Is there anything else?"
+
+### Similarity search
+GET http://localhost:9090/api/chat/search?
+    query=monoidal preordering
+    &topK=3

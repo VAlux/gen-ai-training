@@ -4,6 +4,7 @@ import com.epam.training.gen.ai.chat.api.model.response.ChatResponse;
 import com.epam.training.gen.ai.chat.api.model.response.ChatResponse.ChatErrorResponse;
 import com.epam.training.gen.ai.chat.api.model.response.ChatResponse.ChatSuccessfulResponse;
 import com.epam.training.gen.ai.chat.service.CompletionInvocationService;
+import com.epam.training.gen.ai.embedding.VectorStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,13 @@ public class ChatController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
 
   private final CompletionInvocationService completionService;
+  private final VectorStorageService vectorStorageService;
 
   @Autowired
-  public ChatController(CompletionInvocationService completionService) {
+  public ChatController(CompletionInvocationService completionService,
+                        VectorStorageService vectorStorageService) {
     this.completionService = completionService;
+    this.vectorStorageService = vectorStorageService;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,5 +42,18 @@ public class ChatController {
       .map(output -> (ChatResponse) new ChatSuccessfulResponse(output))
       .orElseGet(() -> new ChatErrorResponse("Failed to perform chat completion"))
       .asResponseEntity();
+  }
+
+  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> searchDocuments(
+    @RequestParam(value = "query") String query,
+    @RequestParam(value = "topK", defaultValue = "10") Integer topK) {
+
+    var documents = this.vectorStorageService.search(query, topK);
+
+    LOGGER.info("-> Received search request for query: {} with topK: {}", query, topK);
+    LOGGER.info("<- Found {} documents", documents.size());
+
+    return ResponseEntity.ok(documents);
   }
 }
