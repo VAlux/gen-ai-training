@@ -1,4 +1,4 @@
-package com.epam.training.gen.ai.properties;
+package com.epam.training.gen.ai.config.properties;
 
 import com.epam.training.gen.ai.shared.ModelDeployment;
 import org.springframework.boot.context.properties.ConfigurationProperties;

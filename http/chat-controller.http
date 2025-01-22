@@ -21,7 +21,17 @@ GET http://localhost:9090/api/chat?prompt=what is the current time in New York?
 GET http://localhost:9090/api/chat?prompt=turn on the light 1
 //"output": "Okay, I've turned on light 1. Is there anything else?"
 
-### Similarity search
-GET http://localhost:9090/api/chat/search?
-    query=monoidal preordering
-    &topK=3
+### Send documents to embed
+POST http://localhost:9090/api/chat/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="data.txt"
+Content-Type: text/plain
+
+< ./monads.txt
+--WebAppBoundary--
+
+### Query relative to monads.txt
+GET http://localhost:9090/api/chat?prompt=how to build a maybe monad
+

@@ -47,9 +47,6 @@
     <dependency>
       <groupId>org.springframework.ai</groupId>
       <artifactId>spring-ai-azure-openai-spring-boot-starter</artifactId>
-    </dependency>    <dependency>
-      <groupId>org.springframework.ai</groupId>
-      <artifactId>spring-ai-tika-document-reader</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.ai</groupId>
@@ -120,6 +117,11 @@
       <groupId>com.azure</groupId>
       <artifactId>azure-ai-openai</artifactId>
       <version>1.0.0-beta.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>3.0.3</version>
     </dependency>
   </dependencies>
 

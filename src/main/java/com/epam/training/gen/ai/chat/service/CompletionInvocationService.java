@@ -1,11 +1,14 @@
 package com.epam.training.gen.ai.chat.service;
 
+import com.epam.training.gen.ai.config.properties.RagConfigurationProperties;
+import com.epam.training.gen.ai.embedding.VectorStorageService;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.orchestration.InvocationContext;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
 import com.microsoft.semantickernel.services.chatcompletion.ChatMessageContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,28 +25,33 @@ public class CompletionInvocationService {
   private final InvocationContext invocationContext;
   private final Kernel kernel;
   private final ChatHistoryService historyService;
+  private final RagConfigurationProperties ragConfigurationProperties;
+  private final VectorStorageService vectorStorageService;
 
   @Autowired
   public CompletionInvocationService(ChatCompletionService completionService,
                                      InvocationContext invocationContext,
                                      Kernel kernel,
-                                     ChatHistoryService historyService) {
+                                     ChatHistoryService historyService,
+                                     RagConfigurationProperties ragConfigurationProperties,
+                                     VectorStorageService vectorStorageService) {
     this.completionService = completionService;
     this.invocationContext = invocationContext;
     this.kernel = kernel;
     this.historyService = historyService;
+    this.ragConfigurationProperties = ragConfigurationProperties;
+    this.vectorStorageService = vectorStorageService;
   }
 
   public Optional<String> complete(String prompt) {
-    this.historyService.addUserMessage(prompt);
+    var similarDocuments = this.vectorStorageService.search(prompt, 5);
 
-    final var previousMessages = this.historyService.getChatHistory().getMessages().stream()
-      .map(message -> message.getAuthorRole() + ": " + message.getContent())
+    var context = similarDocuments.stream()
+      .map(Document::getText)
       .collect(Collectors.joining("\n"));
 
-    LOGGER.info("Previous messages: {}", previousMessages);
-
-    final var fullPrompt = previousMessages + "\nUser: " + prompt;
+    var systemPrompt = this.ragConfigurationProperties.getSystemPrompt();
+    var fullPrompt = systemPrompt + "\nContext: " + context + "\nUser: " + prompt;
 
     try {
       var response =

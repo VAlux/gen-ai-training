@@ -1,8 +1,12 @@
 package com.epam.training.gen.ai.embedding;
 
+import com.epam.training.gen.ai.document.reader.ContentType;
+import com.epam.training.gen.ai.document.reader.DocumentReader;
+import com.epam.training.gen.ai.document.reader.DocumentReader.DocumentContainer;
+import com.epam.training.gen.ai.document.reader.PdfDocumentReader;
+import com.epam.training.gen.ai.document.reader.TxtDocumentReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,26 +22,40 @@ public class VectorStorageInitializer {
 
   private final VectorStorageService vectorStorageService;
   private final TokenTextSplitter textSplitter;
+  private final PdfDocumentReader pdfDocumentReader;
+  private final TxtDocumentReader txtDocumentReader;
 
   @Value("classpath:/documents/cats.pdf")
-  Resource resource;
+  Resource catsResource;
+
+  @Value("classpath:/documents/monads.txt")
+  Resource monadsResource;
 
   @Autowired
-  public VectorStorageInitializer(VectorStorageService vectorStorageService) {
+  public VectorStorageInitializer(VectorStorageService vectorStorageService,
+                                  TokenTextSplitter textSplitter,
+                                  PdfDocumentReader pdfDocumentReader,
+                                  TxtDocumentReader txtDocumentReader) {
     this.vectorStorageService = vectorStorageService;
-
-    // NO, we do not need to extract these magic numbers to the configuration, or somewhere else. This is just a PoC.
-    this.textSplitter = new TokenTextSplitter(300, 300, 5, 1000, true);
+    this.textSplitter = textSplitter;
+    this.pdfDocumentReader = pdfDocumentReader;
+    this.txtDocumentReader = txtDocumentReader;
   }
 
   @EventListener(ApplicationReadyEvent.class)
   public void init() {
-    var reader = new TikaDocumentReader(this.resource);
-    var content = reader.get();
-    var splitDocuments = this.textSplitter.split(content);
+//    embed(this.catsResource, ContentType.PDF, this.pdfDocumentReader);
+    embed(this.monadsResource, ContentType.TXT, this.txtDocumentReader);
+  }
 
-    LOGGER.info("Embedding {} document chunks, please wait before performing the search...", splitDocuments.size());
-    this.vectorStorageService.persistDocuments(splitDocuments);
-    LOGGER.info("Embedded {} document chunks, you may proceed with searching", splitDocuments.size());
+  private void embed(Resource resource, ContentType contentType, DocumentReader documentReader) {
+    DocumentContainer.fromResource(resource, contentType)
+      .flatMap(documentReader::read)
+      .map(this.textSplitter::split)
+      .ifPresent(documents -> {
+        LOGGER.info("Embedding {} document chunks, please wait before performing the search...", documents.size());
+        this.vectorStorageService.persistDocuments(documents);
+        LOGGER.info("Embedded {} document chunks, you may proceed with searching", documents.size());
+      });
   }
 }
